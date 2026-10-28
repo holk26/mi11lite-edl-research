@@ -162,3 +162,28 @@ sin mapa de BSS fiable) — no es viable en una sesión de reparación.
 | **Glitching** (fallo de tensión/reloj sobre el PBL para saltar la firma) | Técnica real de laboratorio; hardware tipo Pico Glitcher. Días de trabajo y suerte |
 | **Cambio de placa base** de segunda mano | Pragmático: los datos ya son inaccesibles, así que sustituir la placa "arregla" el teléfono |
 | **Servicio con cuenta autorizada** (p.ej. hyperunlock, que responde ese mismo hilo de xiaomi.eu) | Fiable, coste bajo; nosotros ya tenemos la ROM verificada |
+
+## 11. Verificación del verificador, a nivel de instrucciones (2026-10-28)
+
+Desensamblado con `llvm-objdump -d --triple=aarch64` sobre `prog_firehose_ddr.elf`
+(base `0x1481d000`). Función `0x1482fc68` = verificador RSA de la firma del nonce.
+
+Comprobaciones literales encontradas:
+
+| Chequeo | Offsets | Instrucción clave |
+|---|---|---|
+| firma nula → error | `0x1482fc94` | `cbz x8` |
+| largo de firma **exactamente** 256 | `0x1482fc98` | `cmp x1, #0x100; b.ne` |
+| hash no nulo, largo 1..245 | `0x1482fca8`/`0x1482fcb4` | `cbz x2` / `cmp x9,#0xf4; b.hi` |
+| copia de la firma a pila | `0x1482fccc` | bucle 256 bytes |
+| prefijo `00 01` | `0x1482fe8c`/`0x1482fe98` | `cbnz` + `cmp #0x1` |
+| relleno `FF…FF` completo | `0x1482fec0` | `ldrb; cmp #0xff; b.ne error` |
+| separador `00` | `0x1482fee0` | `ldrb [x9,x8]; cbz` |
+| comparación de hash **completa** | `0x1482ff2c` | bucle hasta `x10 == 0x100` |
+
+Conclusión medida: PKCS#1 v1.5 **estricto** (sin parser laxo: no hay BERserk),
+largo forzado a 256 B (sin ataque de firma corta), hash comparado entero (64 B,
+SHA-512) y exponente `0x10001` (sin ataque de cubo). Cualquier falsificación
+requiere la clave privada; los caminos restantes son físicos (glitch,
+side-channel) o de cadena de suministro (loader de ingeniería firmado), no
+criptográficos.
