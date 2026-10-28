@@ -1,0 +1,47 @@
+| partición | LUN | start_sector | sectores | MB | archivo | md5 |
+|---|---|---|---|---|---|---|
+| switch | 0 | 6 | 2 | 0.0 | `dummy.img` | 0829f71740aab1ab98b33eae21dee122 |
+| misc | 0 | 33536 | 1024 | 4.0 | `misc.img` | 0829f71740aab1ab98b33eae21dee122 |
+| cust | 0 | 147456 | 262144 | 1024.0 | `cust.img` | e4f15695a045bf094e1ae946fcb850b6 |
+| super | 0 | 409600 | 2228224 | 8704.0 | `super.img` | (grande, md5 aparte) |
+| vbmeta_system_a | 0 | 2637824 | 32 | 0.1 | `vbmeta_system.img` | c195c075455250eb6a0abc24a1efad67 |
+| metadata | 0 | 2646016 | 4096 | 16.0 | `metadata.img` | 4d3da54958353c903291ea60723ed3b1 |
+| userdata | 0 | 2785280 | 0 | 0.0 | `userdata.img` | (grande, md5 aparte) |
+| PrimaryGPT | 0 | 0 | 6 | 0.0 | `gpt_main0.bin` | e09eec1663d7b494579976f594133a81 |
+| BackupGPT | 0 | NUM_DISK_SECTORS-5. | 5 | 0.0 | `gpt_backup0.bin` | b905047a3ffe7836dbe13258da45d5a9 |
+| xbl_a | 1 | 6 | 2048 | 8.0 | `xbl.elf` | 200074a16142c736b3416e904b1a504f |
+| xbl_config_a | 1 | 2054 | 128 | 0.5 | `xbl_config.elf` | f233527a82fc17772cd502f6c19fc7ef |
+| PrimaryGPT | 1 | 0 | 6 | 0.0 | `gpt_main1.bin` | 88797710abe91921182a595f98360efb |
+| BackupGPT | 1 | NUM_DISK_SECTORS-5. | 5 | 0.0 | `gpt_backup1.bin` | 341ad76bab54e8b3a97726f43c408c65 |
+| PrimaryGPT | 2 | 0 | 6 | 0.0 | `gpt_main2.bin` | b5dddeb2c1bbc3d47225dacd9f12301e |
+| BackupGPT | 2 | NUM_DISK_SECTORS-5. | 5 | 0.0 | `gpt_backup2.bin` | b7957ae0ee51ca9ffb63b8d9904b71b7 |
+| PrimaryGPT | 3 | 0 | 6 | 0.0 | `gpt_main3.bin` | da618bb8a2460c649caf0d1c1ff58f1f |
+| BackupGPT | 3 | NUM_DISK_SECTORS-5. | 5 | 0.0 | `gpt_backup3.bin` | b2c971f5790f7a6517b8a15ee3799aaf |
+| aop_a | 4 | 6 | 128 | 0.5 | `aop.mbn` | 72afdf01dc2b64867277b9e6d4df6c80 |
+| tz_a | 4 | 134 | 1024 | 4.0 | `tz.mbn` | 5433b47ae5ab18d52bfe7a29020a56ee |
+| hyp_a | 4 | 1158 | 2048 | 8.0 | `hypvm.mbn` | de7da9600937845ff2a6da5238a685f0 |
+| modem_a | 4 | 3206 | 114688 | 448.0 | `NON-HLOS.bin` | 5e00285fe7db6140f45b165c9014f860 |
+| bluetooth_a | 4 | 117894 | 512 | 2.0 | `BTFM.bin` | 397690aca3cc447a0888667929808022 |
+| abl_a | 4 | 127622 | 512 | 2.0 | `abl.elf` | 10c79ff02e1d19bffedaefdce5271876 |
+| dsp_a | 4 | 128134 | 16384 | 64.0 | `dspso.bin` | 8e7897d95b0040c6a5b35bc6dca0a39b |
+| keymaster_a | 4 | 144518 | 256 | 1.0 | `km41.mbn` | 59eb5d67cc8d2cacd3526e7ec1c6cc9c |
+| boot_a | 4 | 144774 | 49152 | 192.0 | `boot.img` | 43a8b18510c855863fbb607e30a1b5a0 |
+| devcfg_a | 4 | 193926 | 64 | 0.2 | `devcfg.mbn` | 057419c788e6bc57f14626c368777337 |
+| qupfw_a | 4 | 193990 | 32 | 0.1 | `qupv3fw.elf` | 5b839c3788d20898d3364a2cb4a8f906 |
+| vbmeta_a | 4 | 194022 | 32 | 0.1 | `vbmeta.img` | 11c7cae13db6d3dbf32aabbadf0d842a |
+| dtbo_a | 4 | 194054 | 6144 | 24.0 | `dtbo.img` | 3df5ebbbfa7ab9ccf7fac32e137c4425 |
+| uefisecapp_a | 4 | 200198 | 512 | 2.0 | `uefi_sec.mbn` | 90b852fd585d5b03640fdf1c4e87889d |
+| shrm_a | 4 | 201222 | 32 | 0.1 | `shrm.elf` | 9a9e595aa9f575f3867c5aebafb70555 |
+| multiimgoem_a | 4 | 201254 | 8 | 0.0 | `multi_image.mbn` | bb7df04e1b0a2570657527a7e108ae23 |
+| cpucp_a | 4 | 201262 | 256 | 1.0 | `cpucp.elf` | 7d3732491b778aa2dad0bf5e3be29c80 |
+| featenabler_a | 4 | 201518 | 32 | 0.1 | `featenabler.mbn` | 6161a1e341d54097ec8b6d7778924c7c |
+| vendor_boot_a | 4 | 201550 | 24576 | 96.0 | `vendor_boot.img` | fd480ef95827afd59e042faa7b71c457 |
+| apdp | 4 | 460310 | 64 | 0.2 | `apdp.mbn` | ec87a838931d4d5d2e94a04644788a55 |
+| logo | 4 | 460374 | 16384 | 64.0 | `logo.img` | 4afd55141e55e20c98aab3bdf3fa866a |
+| logfs | 4 | 485130 | 2048 | 8.0 | `logfs_ufs_8mb.bin` | c040a889d66a4f120f502f89b551f42b |
+| storsec | 4 | 503562 | 32 | 0.1 | `storsec.mbn` | 55cc68411d5babb4cb7060982b9a1125 |
+| rtice | 4 | 517270 | 128 | 0.5 | `rtice.mbn` | c23f8d836a8cd80873200c19544202cf |
+| PrimaryGPT | 4 | 0 | 6 | 0.0 | `gpt_main4.bin` | 3161feb8aadf337529e43ede6159f2d4 |
+| BackupGPT | 4 | NUM_DISK_SECTORS-5. | 5 | 0.0 | `gpt_backup4.bin` | d5ba9f89f9df6f1fd2766c395d5c0554 |
+| PrimaryGPT | 5 | 0 | 6 | 0.0 | `gpt_main5.bin` | df2a8f86ce0df77fc768ede8ae65ad07 |
+| BackupGPT | 5 | NUM_DISK_SECTORS-5. | 5 | 0.0 | `gpt_backup5.bin` | 5ab9e38e90c06d7aa456ce72c20961a7 |

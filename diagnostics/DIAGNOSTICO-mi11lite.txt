@@ -1,0 +1,76 @@
+DIAGNÓSTICO — Xiaomi Mi 11 Lite 5G (renoir) · serial <DEVICE_SERIAL>
+Fecha: 2026-10-27 21:30 (PDT) · Host: CachyOS, android-tools 37.0.0p1, edlclient v3
+Estado: SOLO fastboot, bootloader BLOQUEADO, sin imagen de arranque válida
+
+== Lectura del bootloader (fastboot getvar all) ==
+product              : renoir   (Mi 11 Lite 5G — NO es el NE/lisa)
+unlocked             : no
+secure               : yes
+device-info          : Device unlocked: false / critical unlocked: false / Verity mode: false
+current-slot         : a
+slot-unbootable:a    : yes      <-- causa del fallo: slot activo marcado no arrancable
+slot-successful:a    : no
+slot-retry-count:a   : 0
+slot-unbootable:b    : no
+slot-successful:b    : no
+battery-voltage      : 0        (sospechoso: 0 mV, el gauge no reporta)
+battery-soc-ok       : yes
+version-bootloader   : (vacío)
+version-baseband     : (vacío)
+snapshot-update-status: none
+max-download-size    : 805306368
+kernel               : uefi
+Particiones: UFS, esquema A/B, SIN partición "recovery" separada
+  (boot_a/boot_b, vendor_boot_a/b, dtbo, vbmeta, vbmeta_system, super, misc, modemst1/2...)
+
+== Comandos probados y resultado literal ==
+fastboot continue            -> FAILED (remote: 'Failed to load image from partition: Load Error')
+fastboot reboot recovery     -> OKAY, reinicia (USB cae y vuelve) y entra otra vez a fastboot
+fastboot --set-active=b      -> FAILED (remote: 'Slot Change is not allowed in Lock State')
+fastboot boot fw/boot.img    -> envia 196608 KB OKAY, luego FAILED (remote: 'Fastboot boot command is not available in locked device')
+fastboot oem edl             -> FAILED (remote: 'Edl Token Verify Failed')
+fastboot oem edl-mode        -> FAILED (remote: 'Edl Token Verify Failed')
+fastboot flashing unlock     -> FAILED (remote: 'Token Verify Failed, Reboot the device')
+fastboot oem unlock-go       -> FAILED (remote: 'Token Verify Failed, Reboot the device')
+
+== ROMs verificadas (MD5 coincide con el hash del nombre oficial) ==
+renoir_global_images_V14.0.7.0.TKIMIXM_20231222.0000.00_13.0_global_e21e2a7d85.tgz
+   6326231037 bytes  MD5 e21e2a7d857b7cbf294da846089ce577  = e21e2a7d85... OK
+   contiene: prog_firehose_ddr.elf, prog_firehose_lite.elf, rawprogram0-5.xml,
+             patch0-5.xml, boot.img, vendor_boot.img, super.img, xbl.elf, abl.elf...
+   -> ESTE .tgz es exactamente lo que se le da a MiFlash en modo EDL.
+miui_RENOIRGlobal_V14.0.7.0.TKIMIXM_cac144253c_13.0.zip
+   4790236438 bytes  MD5 cac144253c6769c029a167e0632b9359  = cac144253c... OK
+   (recovery ROM "update.zip"; no aplicable: no hay recovery en el equipo)
+
+== Conclusión técnica ==
+El bootloader funciona y está de fábrica (bloqueado, secure, sin modificar), pero:
+ 1. La imagen de arranque del slot A no se puede cargar (Load Error) y el slot está
+    marcado unbootable -> el equipo cae a fastboot sin mostrar logo.
+ 2. El slot B no es seleccionable porque el cambio de slot requiere bootloader desbloqueado.
+ 3. No existe recovery stock (renoir A/B) -> no hay "Wipe Data" posible.
+ 4. EDL/9008 pide token de cuenta Xiaomi autorizada ("Edl Token Verify Failed").
+=> No hay ninguna vía de reparación por software desde Linux/fastboot en este estado.
+   Única salida: flasheo EDL con cuenta autorizada (MiFlash / servicio técnico), o
+   entrada a 9008 por test points + firehose autorizado. Un flasheo EDL borra datos.
+
+Posible causa: actualización OTA interrumpida/corrupta; no se descarta fallo de UFS
+(version-bootloader y version-baseband vacíos, battery-voltage 0).
+
+== AMPLIACIÓN: sesión EDL 9008 por test points (2026-10-27 21:40) ==
+Entrada a EDL OK: 05c6:9008, QUSB_BULK_CID:0425_SN:<EDL_SESSION_SN>
+Sahara v2, 64-bit | HWID 0x001590e1XXXXXXXX (MSM_ID 0x001590e1) | CPU "cedros"
+PK_HASH 1bebe3863a6781db...
+
+Programmer oficial prog_firehose_ddr.elf: CARGA OK
+Toda operacion posterior -> "firehose - [LIB]: Error on EDL Authentification"
+  probado: printgpt, qfil, rs (sectores crudos), peekqword, secureboot,
+           --skipstorageinit, prog_firehose_lite.elf,
+           loader del HWID exacto (001590e1XXXXXXXX_..._fhprg_edlauth.bin)
+Loaders sin auth (bkerler/Loaders, mismo PK hash):
+  xxx LAHAINA SM8250  -> Sahara NAK 0x12 (SAHARA_NAK_INVALID_DEST_ADDR)
+  xxx qc_factory_sd765 -> no sube
+  xxx 0014d0e1 SM6150/7150 -> no sube
+=> No hay loader no-auth publico para cedros/renoir.
+   Se requiere cuenta Xiaomi autorizada o loader no-auth privado (servicio).
+NADA fue escrito en el telefono: solo lecturas y un upload de loader rechazado.

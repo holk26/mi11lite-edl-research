@@ -1,0 +1,20 @@
+# ROMs, loaders e imágenes: nunca al repo (tamaño + material propietario)
+*.tgz
+*.zip
+*.elf
+*.img
+*.mbn
+*.bin
+*.xml
+!scripts/*.xml
+
+# volcados y logs de sesión
+edl_dump/
+fw/
+fw_full/
+patch/
+logs/
+*.log
+
+# configuraciones locales con seriales
+edl_config.json
